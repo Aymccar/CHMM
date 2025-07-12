@@ -1,8 +1,12 @@
 #pragma once
+#include<unordered_map>
+#include<string>
+#include<functional>
 
 class State {
 public:
     State(){};
+    State(const State& other);
     State(std::string name, std::function<double(std::vector<double>)> emission, std::unordered_map<std::string, double> transition)
     :_name(name), _emission(emission), _transition(transition){};
 

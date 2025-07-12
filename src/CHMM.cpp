@@ -5,8 +5,8 @@
 using namespace std;
 
 
-CHMM::CHMM(const unordered_map<vector<State>, double>& E_0):
-    E_t(E_0), E_t_m_1(E_0)
+CHMM::CHMM(const unordered_map<vector<State>, double>& E_0, const vector<vector<State>>& S_E_):
+    E_t(E_0), E_t_m_1(E_0), S_E(S_E_)
 {
 }
 
@@ -43,17 +43,26 @@ void CHMM::update(const vector<vector<double>> O_t){
     for (auto& [_, prob] : E_t){prob = 0;}; // emptying E_t
      
     for (auto& [conf_t, prob_t] : E_t) { //Calculation made for every configuration at the time t
-        for (const auto& [conf_t_m_1, prob_t_m_1] : E_t_m_1){ //Then for every previous configuration
-           double prob_sub_transition = 1;
-           for(size_t i = 0; i < conf_t_m_1.size(); i++){ // Transition for every sub-HMM
-               prob_sub_transition *= conf_t_m_1[i].transition(conf_t[i]); //Each transition are independent 
-           }
-           prob_sub_transition *= prob_t_m_1;
-           prob_t += prob_sub_transition;
-        }
+        bool is_accessible = true;
+        for (const auto& s_e : S_E){
+            if (s_e == conf_t) {
+                prob_t = 0;
+                is_accessible = false;
+            }
+        } 
+        if (is_accessible){
+            for (const auto& [conf_t_m_1, prob_t_m_1] : E_t_m_1){ //Then for every previous configuration
+               double prob_sub_transition = 1;
+               for(size_t i = 0; i < conf_t_m_1.size(); i++){ // Transition for every sub-HMM
+                   prob_sub_transition *= conf_t_m_1[i].transition(conf_t[i]); //Each transition are independent 
+               }
+               prob_sub_transition *= prob_t_m_1;
+               prob_t += prob_sub_transition;
+            }
 
-        for (size_t i = 0; i < O_t.size(); i++){ //Emission
-            prob_t *= conf_t[i].emission(O_t[i]); //Each emission are independent
+            for (size_t i = 0; i < O_t.size(); i++){ //Emission
+                prob_t *= conf_t[i].emission(O_t[i]); //Each emission are independent
+            }
         }
     }
 

@@ -5,6 +5,7 @@ project(CHMM)
 # Create the CHMM library
 add_library(chmm
     src/CHMM.cpp
+    src/State.cpp
 )
 
 # Create the test executable
