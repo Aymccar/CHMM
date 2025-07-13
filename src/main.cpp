@@ -38,6 +38,17 @@ int main(int argc, char** argv){
         chmm.print();
         cout << "-----------------" << endl;
     }
+    unordered_map<State, double> prob_0 = chmm.get_prob(0);
+    unordered_map<State, double> prob_1 = chmm.get_prob(1);
+
+    cout << "HMM 1 : " << endl;
+    for (auto& [conf, prob] : prob_0) {
+        cout << conf.get_name() << " : " << prob << endl;
+    }
+    cout << "HMM 2 : " << endl;
+    for (auto& [conf, prob] : prob_1) {
+        cout << conf.get_name() << " : " << prob << endl;
+    }
 
     return 0;
 }

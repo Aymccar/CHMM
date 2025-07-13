@@ -30,10 +30,10 @@ void cartesianProduct(
 
     
 // Used by the user to easily get a vector of string with all the possible configuration of the CHMM. Usefull at least for the init
-vector<vector<State>> CHMM::compute_conf(const vector<vector<State>>& state_set) {
+vector<vector<State>> CHMM::compute_conf(const vector<vector<State>>& HMMs) {
     vector<vector<State>> result;
-    vector<State> current(state_set.size());  // Flat vector of names
-    cartesianProduct(state_set, current, 0, result);
+    vector<State> current(HMMs.size());  // Flat vector of names
+    cartesianProduct(HMMs, current, 0, result);
     return result;
 }
 
@@ -76,9 +76,28 @@ void CHMM::update(const vector<vector<double>> O_t){
     }
 }
 
+unordered_map<State, double> CHMM::get_prob(int i) {
+    unordered_map<State, double> ret;
+    for (const auto& [conf, prob] : E_t){
+        State state_i = conf[i];
+        //ret.try_emplace(state_i, 0); Seems unnecessary
+        ret[state_i] += prob;
+    }
+
+    return ret;
+}
+
+vector<unordered_map<State, double>> CHMM::get_prob() {
+    vector<unordered_map<State, double>> ret;
+    for (int i = 0; i < E_t.begin()->first.size(); i++){
+        ret.push_back(get_prob(i));
+    }
+    return ret;
+}
+
 
 void CHMM::print(){
-    for (auto [conf, prob] : E_t){
+    for (const auto& [conf, prob] : E_t){
         cout << "Pr(";
         for (auto state_ptr = conf.begin(); state_ptr != conf.end(); state_ptr++){
             cout << state_ptr->get_name();
