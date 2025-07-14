@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.9)
 
 project(CHMM)
 
+set(CMAKE_CXX_FLAGS "-O3")
+
 # Create the CHMM library
 add_library(chmm
     src/CHMM.cpp

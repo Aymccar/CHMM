@@ -37,7 +37,7 @@ vector<vector<State>> CHMM::compute_conf(const vector<vector<State>>& HMMs) {
     return result;
 }
 
-void CHMM::update(const vector<vector<double>> O_t){
+void CHMM::update(const vector<vector<double>>& O_t){
 
     E_t_m_1 = unordered_map<vector<State>, double>(E_t); //Copy data at time t in t-1
     for (auto& [_, prob] : E_t){prob = 0;}; // emptying E_t
@@ -93,6 +93,12 @@ vector<unordered_map<State, double>> CHMM::get_prob() {
         ret.push_back(get_prob(i));
     }
     return ret;
+}
+
+double CHMM::sum(){
+    double sum = 0;
+    for (auto [_, prob] : E_t) sum += prob;
+    return sum;
 }
 
 

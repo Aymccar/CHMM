@@ -15,13 +15,14 @@ class CHMM {
 public :
     CHMM(const std::unordered_map<std::vector<State>, double>& E_0, const std::vector<std::vector<State>>& S_E_);
 
-    void update(const std::vector<std::vector<double>> O_t);
+    void update(const std::vector<std::vector<double>>& O_t);
 
     std::unordered_map<State, double> get_prob(int i);
     std::vector<std::unordered_map<State, double>> get_prob();
 
     static CHMMConf_t compute_conf(const std::vector<HMM_t>& state_set);
 
+    double sum();
     void print();
 
 private :
