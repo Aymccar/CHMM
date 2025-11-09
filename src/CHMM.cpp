@@ -1,12 +1,13 @@
 #include"CHMM.h"
 
-#include<iostream>
+#include <fstream>
+#include <string>
 
 using namespace std;
 
 
 CHMM::CHMM(const unordered_map<vector<State>, double>& E_0, const vector<vector<State>>& S_E_):
-    E_t(E_0), E_t_m_1(E_0), S_E(S_E_)
+    E_t(E_0), E_t_m_1(E_0), S_E(S_E_), header(false)
 {
 }
 
@@ -60,7 +61,7 @@ void CHMM::update(const vector<vector<double>>& O_t){
                prob_t += prob_sub_transition;
             }
 
-            for (size_t i = 0; i < O_t.size(); i++){ //Emission
+            for (size_t i = 0; i < conf_t.size(); i++){ //Emission
                 prob_t *= conf_t[i].emission(O_t[i]); //Each emission are independent
             }
         }
@@ -99,6 +100,27 @@ double CHMM::sum(){
     double sum = 0;
     for (auto [_, prob] : E_t) sum += prob;
     return sum;
+}
+
+void CHMM::write(std::ofstream& stream, double ts){
+    if (!header) {
+        stream << "ts" << "\t";
+        for (const auto& [conf, _] : E_t){
+            for (auto state_ptr = conf.begin(); state_ptr != conf.end(); state_ptr++){
+                stream << state_ptr->get_name();
+                if (state_ptr != conf.end() - 1) stream << " - ";
+            }
+            stream << "\t"; //std::tab
+        }
+        header = true;
+        stream << std::endl;
+    }
+    
+    stream << ts << "\t";
+    for (const auto& [_, prob] : E_t){
+        stream << prob << "\t";
+    }
+    stream << std::endl;
 }
 
 

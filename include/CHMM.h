@@ -2,6 +2,8 @@
 #include"hash_utils.h"
 #include"State.h"
 
+#include <fstream>
+
 #include <string>
 #include <functional>
 #include <vector>
@@ -24,8 +26,12 @@ public :
 
     double sum();
     void print();
+    void write(std::ofstream& stream, double ts);
 
 private :
+
+    bool header;
+
     std::vector<HMM_t> HMMs;
     std::unordered_map<std::vector<State>, double> E_t;
     std::unordered_map<std::vector<State>, double> E_t_m_1;
